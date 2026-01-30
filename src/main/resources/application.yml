@@ -1,0 +1,18 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: letsplay
+      username: admin
+      password: secret123
+      authentication-database: admin
+
+jwt:
+  secret: 65eb26c055f1db06ca30ee63aa222eb85202f183699e520b4b230f5d5a62d804
+  expiration: 86400000
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
