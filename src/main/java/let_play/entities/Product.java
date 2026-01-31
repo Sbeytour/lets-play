@@ -1,6 +1,6 @@
 package let_play.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -31,8 +31,8 @@ public class Product {
     private String userId;
 
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private  LocalDate updatedAt;
+    private  LocalDateTime updatedAt;
 }
