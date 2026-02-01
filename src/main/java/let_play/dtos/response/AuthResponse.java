@@ -1,10 +1,11 @@
 package let_play.dtos.response;
 
-import let_play.entities.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class AuthResponse {
     private String token;
-    private User user;
+    private UserResponse user;
 }
