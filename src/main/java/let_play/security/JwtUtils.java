@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,7 +17,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import let_play.entities.User;
 
-public class jwtUtils {
+@Service
+public class JwtUtils {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
