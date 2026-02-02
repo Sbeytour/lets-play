@@ -34,7 +34,7 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint, AccessDenied
             errorMessage = jwtError.toString();
         }
 
-        ErrorResponse err = new ErrorResponse("Unauthorized", 401, errorMessage);
+        ErrorResponse err = new ErrorResponse(401, "Unauthorized", errorMessage);
 
         String jsonResponse = objectMapper.writeValueAsString(err);
         response.getWriter().write(jsonResponse);
@@ -46,7 +46,7 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint, AccessDenied
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
-        ErrorResponse err = new ErrorResponse("Forbidden", 403,
+        ErrorResponse err = new ErrorResponse(403, "Forbidden",
                 "You don't have permission to access this resource");
 
         String jsonResponse = objectMapper.writeValueAsString(err);
