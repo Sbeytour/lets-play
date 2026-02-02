@@ -1,17 +1,24 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://admin:secret123@localhost:27017/letsplay?authSource=admin
-      username: admin
-      password: secret123
+      uri: mongodb://localhost:27017
       database: letsplay
-      authentication-database: admin
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
 
 jwt:
   secret: 65eb26c055f1db06ca30ee63aa222eb85202f183699e520b4b230f5d5a62d804
   expiration: 86400000
 
+# --- HTTPS (SSL/TLS) Configuration ---
 server:
-  port: 8080
-  error:
-    include-stacktrace: never
+  port: 8443
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-type: PKCS12
+    key-store-password: password
+    key-alias: springboot
