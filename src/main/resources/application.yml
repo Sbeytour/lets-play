@@ -1,11 +1,10 @@
 spring:
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: letsplay
+      uri: mongodb://admin:secret123@localhost:27017/letsplay?authSource=admin
       username: admin
       password: secret123
+      database: letsplay
       authentication-database: admin
 
 jwt:
