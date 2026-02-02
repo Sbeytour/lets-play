@@ -9,4 +9,7 @@ import let_play.entities.Product;
 public interface ProductRepository extends MongoRepository<Product, String> {
 
     List<Product> findByUserId(String userId);
+
+    void deleteByUserId(String userID);
+
 }

@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Collection;
@@ -26,14 +28,18 @@ public class User implements UserDetails {
     private String id;
 
     @NotBlank(message = "the name is required")
+    @Size(min = 3, max = 100, message = "Name must be between 2 and 100 characters")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Name must contain only letters and spaces")
     private String name;
 
     @Indexed(unique = true)
     @Email(message = "Email Non valid format")
+    @Size(max = 100, message = "Email must be under 100 characters long")
     @NotBlank(message = "email is required")
     private String email;
 
     @NotBlank(message = "Password is required")
+    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     private String password;
 
     private Role role = Role.USER;

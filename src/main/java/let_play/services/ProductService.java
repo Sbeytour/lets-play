@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import let_play.dtos.request.ProductRequest;
-import let_play.dtos.request.ProductUpdateRequest;
+import let_play.dtos.request.UpdateProductRequest;
 import let_play.dtos.response.ProductResponse;
 import let_play.entities.Product;
 import let_play.entities.Role;
@@ -43,7 +43,7 @@ public class ProductService {
         return ProductResponse.fromEntity(product);
     }
 
-    public ProductResponse updateProduct(String id, ProductUpdateRequest request, String userId) {
+    public ProductResponse updateProduct(String id, UpdateProductRequest request, String userId) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> null); // handle exception
 

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class ProductUpdateRequest {
+public class UpdateProductRequest {
     @Size(min = 3, max = 100, message = "Product name must be between 3 and 100 characters")
     String name;
 
