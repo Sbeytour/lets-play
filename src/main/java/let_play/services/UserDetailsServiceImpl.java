@@ -3,10 +3,12 @@ package let_play.services;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import let_play.entities.User;
 import let_play.repositories.UserRepository;
 
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
@@ -16,13 +18,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
-        try {
-            User user = userRepository.findByEmail(identifier)
-                    .orElseThrow(() -> null); // handle exception
+        User user = userRepository.findByEmail(identifier)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + identifier));
 
-            return user;
-        } catch (UsernameNotFoundException e) {
-            throw new UsernameNotFoundException("User not found by identifier: " + identifier);
-        }
+        return user;
     }
 }

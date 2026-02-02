@@ -10,6 +10,8 @@ import let_play.dtos.response.ProductResponse;
 import let_play.dtos.response.UserResponse;
 import let_play.entities.Product;
 import let_play.entities.Role;
+import let_play.exceptions.ForbiddenException;
+import let_play.exceptions.NotFoundException;
 import let_play.repositories.ProductRepository;
 import let_play.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +24,19 @@ public class ProductService {
 
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAll().stream()
-                .map(porduct -> ProductResponse.fromEntity(porduct))
+                .map(product -> ProductResponse.fromEntity(product))
                 .toList();
     }
 
     public ProductResponse getProductById(String productId) {
-        Product product = productRepository.findById(productId).orElseThrow(() -> null);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product", "id", productId));
         return ProductResponse.fromEntity(product);
     }
 
     public List<ProductResponse> getProductsByUserId(String userId) {
-           if (!userRepository.existsById(userId)) {
-            return null; //handle exception
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException("User", "id", userId);
         }
 
         return productRepository.findByUserId(userId).stream()
@@ -43,7 +46,7 @@ public class ProductService {
 
     public ProductResponse createProduct(CreateProductRequest request, String userId) {
         if (!userRepository.existsById(userId)) {
-            return null; // handle exception
+            throw new NotFoundException("User", "id", userId);
         }
 
         Product newProduct = new Product();
@@ -57,10 +60,10 @@ public class ProductService {
 
     public ProductResponse updateProduct(String id, UpdateProductRequest request, String userId) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> null); // handle exception
+                .orElseThrow(() -> new NotFoundException("Product", "id", id));
 
         if (!product.getUserId().equals(userId)) {
-            return null; // forbiden exception
+            throw new ForbiddenException("You don't have permission to update this product");
         }
 
         if (request.getName() != null) {
@@ -79,10 +82,11 @@ public class ProductService {
 
     public void deleteProduct(String productId, UserResponse user) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> null);
+                .orElseThrow(() -> new NotFoundException("Product", "id", productId));
 
-        if (!product.getUserId().equals(user.getId()) && user.getRole() == Role.USER) {
-            return; // forbiden exception
+        // Allow deletion if user is the owner OR if user is an admin
+        if (!product.getUserId().equals(user.getId()) && user.getRole() != Role.ADMIN) {
+            throw new ForbiddenException("You don't have permission to delete this product");
         }
 
         productRepository.deleteById(productId);

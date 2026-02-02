@@ -12,6 +12,7 @@ import let_play.dtos.response.AuthResponse;
 import let_play.dtos.response.UserResponse;
 import let_play.entities.Role;
 import let_play.entities.User;
+import let_play.exceptions.BadRequestException;
 import let_play.repositories.UserRepository;
 import let_play.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +20,14 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository userRespository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
     public AuthResponse register(RegisterRequest request) {
-        if (userRespository.existsByEmail(request.getEmail())) {
-            return null; // handle exception
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("email already exist");
         }
 
         User newUser = new User();
@@ -35,7 +36,7 @@ public class AuthService {
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(Role.USER);
 
-        User savedUser = userRespository.save(newUser);
+        User savedUser = userRepository.save(newUser);
         String token = jwtUtils.generateToken(savedUser);
 
         return new AuthResponse(token, UserResponse.fromEntity(savedUser));

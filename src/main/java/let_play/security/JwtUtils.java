@@ -16,6 +16,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import let_play.entities.User;
+import io.jsonwebtoken.JwtException;
 
 @Service
 public class JwtUtils {
@@ -29,13 +30,13 @@ public class JwtUtils {
         try {
             String email = user.getEmail();
             Date now = new Date();
-            Date expaireDate = new Date(now.getTime() + jwtExpiration);
+            Date expireDate = new Date(now.getTime() + jwtExpiration);
 
-            return Jwts.builder().setSubject(email).setIssuedAt(now).setExpiration(expaireDate)
+            return Jwts.builder().setSubject(email).setIssuedAt(now).setExpiration(expireDate)
                     .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                     .compact();
         } catch (Exception e) {
-            return null; // handle exceptions
+            throw new JwtException("Failed to generate JWT token", e);
         }
     }
 
@@ -44,7 +45,7 @@ public class JwtUtils {
             byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
             return Keys.hmacShaKeyFor(keyBytes);
         } catch (Exception e) {
-            return null; // handle exceptions
+            throw new JwtException("Invalid JWT signing key", e);
         }
     }
 
@@ -52,8 +53,16 @@ public class JwtUtils {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
             return claims.getSubject();
+        } catch (ExpiredJwtException e) {
+            throw new JwtException("JWT token has expired");
+        } catch (MalformedJwtException e) {
+            throw new JwtException("Invalid JWT token format");
+        } catch (UnsupportedJwtException e) {
+            throw new JwtException("Unsupported JWT token");
+        } catch (IllegalArgumentException e) {
+            throw new JwtException("JWT token is empty or null");
         } catch (Exception e) {
-            return null; // handle exceptions
+            throw new JwtException("Failed to extract user email from token", e);
         }
     }
 
@@ -92,16 +101,10 @@ public class JwtUtils {
     private Claims extractAllClaims(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
-        } catch (SecurityException e) {
-            return null; // handle exception
-        } catch (MalformedJwtException e) {
-            return null; // handle exception
         } catch (ExpiredJwtException e) {
             throw e;
-        } catch (UnsupportedJwtException e) {
-            return null; // handle exception
-        } catch (IllegalArgumentException e) {
-            return null; // handle exception
+        } catch (SecurityException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+            throw new JwtException("Invalid JWT token", e);
         }
     }
 

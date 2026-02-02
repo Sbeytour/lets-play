@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import let_play.dtos.request.UpdateUserRequest;
 import let_play.dtos.response.UserResponse;
 import let_play.entities.User;
+import let_play.exceptions.DuplicatedException;
+import let_play.exceptions.NotFoundException;
 import let_play.repositories.ProductRepository;
 import let_play.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,18 +39,18 @@ public class UserService {
 
     public UserResponse getUserById(String id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> null); //handle exception
+                .orElseThrow(() -> new NotFoundException("User", "id", id));
 
         return UserResponse.fromEntity(user);
     }
 
-    public UserResponse UpdateUser(String userId, UpdateUserRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> null); // henadle exception
+    public UserResponse updateUser(String userId, UpdateUserRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User", "id", userId));
 
         if (request.getEmail() != null && !user.getEmail().equals(request.getEmail()) &&
                 userRepository.existsByEmail(request.getEmail())) {
-            return null; // handle exception
+            throw new DuplicatedException("email already exist");
         }
 
         if (request.getName() != null) {
@@ -68,14 +70,12 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse deleteUser(String id) {
-        User user = userRepository.findById(id).orElseThrow(
-                () -> null); // handle exception
+    public void deleteUser(String id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User", "id", id));
 
         userRepository.deleteById(id);
         productRepository.deleteByUserId(id);
-
-        return UserResponse.fromEntity(user);
     }
 
 }
