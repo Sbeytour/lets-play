@@ -1,11 +1,10 @@
 package let_play.config;
 
-import lombok.RequiredArgsConstructor;
-
 import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -22,9 +21,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import let_play.security.JwtAuthEntryPoint;
 import let_play.security.JwtAuthFilter;
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMongoAuditing
 @RequiredArgsConstructor
 public class SecurityConfig {
 
