@@ -37,7 +37,7 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request) {
         UserResponse user = userService.getCurrentUser();
 
-        UserResponse updatedUser = userService.UpdateUser(user.getId(), request);
+        UserResponse updatedUser = userService.updateUser(user.getId(), request);
         return ResponseEntity.ok(updatedUser);
     }
 

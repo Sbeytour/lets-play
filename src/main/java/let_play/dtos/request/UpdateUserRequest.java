@@ -1,7 +1,5 @@
 package let_play.dtos.request;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -13,7 +11,6 @@ public class UpdateUserRequest {
     @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Name must contain only letters and spaces")
     private String name;
 
-    @Indexed(unique = true)
     @Email(message = "Email Non valid format")
     @Size(max = 100, message = "Email must be under 100 characters long")
     private String email;
