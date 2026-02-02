@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class ProductRequest {
+public class CreateProductRequest {
 
     @NotBlank(message = "Product name cannot be empty")
     private String name;

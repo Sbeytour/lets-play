@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import let_play.dtos.request.ProductRequest;
+import let_play.dtos.request.CreateProductRequest;
 import let_play.dtos.request.UpdateProductRequest;
 import let_play.dtos.response.ProductResponse;
+import let_play.dtos.response.UserResponse;
 import let_play.entities.Product;
 import let_play.entities.Role;
-import let_play.entities.User;
 import let_play.repositories.ProductRepository;
 import let_play.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,16 +20,28 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(porduct -> ProductResponse.fromEntity(porduct))
+                .toList();
     }
 
-    public ProductResponse getProduct(String productId) {
+    public ProductResponse getProductById(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> null);
         return ProductResponse.fromEntity(product);
     }
 
-    public ProductResponse createProduct(ProductRequest request, String userId) {
+    public List<ProductResponse> getProductsByUserId(String userId) {
+           if (!userRepository.existsById(userId)) {
+            return null; //handle exception
+        }
+
+        return productRepository.findByUserId(userId).stream()
+                .map(product -> ProductResponse.fromEntity(product))
+                .toList();
+    }
+
+    public ProductResponse createProduct(CreateProductRequest request, String userId) {
         if (!userRepository.existsById(userId)) {
             return null; // handle exception
         }
@@ -65,7 +77,7 @@ public class ProductService {
         return ProductResponse.fromEntity(savedProduct);
     }
 
-    public void deleteProduct(String productId, User user) {
+    public void deleteProduct(String productId, UserResponse user) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> null);
 
